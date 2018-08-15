@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+    <title>{{dataset.dataset_name}}</title>
+</head>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<style>
+    
+    body { 
+    background: #f5f5f5; 
+    padding-bottom: 30px;
+    }
+
+    div {
+    margin-top:30px;
+    margin-bottom:30px
+    }
+    
+    .jumbotron{
+    margin-top:70px;
+    }
+ </style>
+
+
+<body>
+{% load static %}
+    <nav class="navbar navbar-expand-xl bg-info navbar-light fixed-top">
+  <ul class="navbar-nav mx-auto">
+    <a class="navbar-brand" href="#"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="70">
+    <h5>MAGNET</h5></a>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'index' %}"><h1>Macrophage Annotation of Gene Network Enrichment Tool</h1></a>
+    </li>
+  </ul>
+ </nav>
+    <div class="jumbotron">
+        <p class="h1">{{dataset.full_title}}</p>
+        <p class="lead font-weight-normal">{{dataset.journal}}&nbsp&nbsp&nbsp&nbsp{{dataset.publication_date}}</p>
+        <p><em>{{dataset.authors}}</em></p>
+    </div>
+    
+    <div class="container">
+    <p class="h3">Abstract</p>
+    <p class="text-justify" style="font-size: 14pt">{{dataset.abstract}}</p>
+    </div>
+    
+    <div class="container">
+        <a href={{dataset.link_to_pubmed}} class="btn btn-info" role="button" target="_blank">
+        <span style="font-size:larger;">View Publication on PubMed</span></a>
+    </div>
+    
+    <div class="container">
+        <p class="h3 mb-3">Associated clusters:</p>
+        <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-dark"><tr>
+        <th scope="col">Cluster #</th>
+        <th scope="col">Description</th>
+        <th scope="col">No. of genes</th>
+        </tr></thead>
+        <tbody>
+        {% for cluster,gene_num in cluster_gene_num.items %}
+        <tr><td> {{cluster.cluster_number}} </td>
+        <td> {{cluster.cluster_description}} </td>
+        <td> {{gene_num}} </td></tr>
+        {% endfor %}
+        </tbody></table>
+        
+        <p class="font-weight-bold">A total of {{total_gene_num}} genes are associated with this dataset.</p>
+        
+    </div>
+    
+</body>
+</html>

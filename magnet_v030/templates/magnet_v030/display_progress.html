@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+
+<head>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<title>Processing....</title>
+<style>
+    body { 
+    background: #f5f5f5;
+    }
+    .bar{
+     position: absolute;
+     margin: auto;
+     top: 0;
+     right: 0;
+     bottom: 0;
+     left: 0;
+     width: 800px;
+     height: 100px;
+    }
+    
+    img{
+    display:block;
+    margin:auto;
+    padding-top:10%;
+    }
+    
+ </style>
+
+</head>
+<body>
+ 
+{% load static %}
+
+<div class="container img">
+   <img src="{% static 'magnet_v030/images/magnet_animation.gif' %}">
+</div>
+
+<div class="container bar">
+ <div class='progress' style="height: 20px;"> 
+  <div id='progress-bar' class='progress-bar bg-info' style="width: 0" aria-valuemin="0" aria-valuemax="100">&nbsp;</div>
+</div>
+<div id="progress-bar-message">Waiting for progress to start...</div>
+<script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+<script> 
+var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+function customProgress(progressBarElement, progressBarMessageElement, progress) {
+    progressBarElement.style.backgroundColor = '#9400D3';
+    progressBarElement.style.width = progress.percent + "%";
+    progressBarMessageElement.innerHTML = "Current progress: " + progress.percent + "%";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  CeleryProgressBar.initProgressBar(progressUrl, {
+    
+   onProgress: customProgress,
+    onSuccess: function() {
+      window.location.href = "{% url 'results' %}";
+    }
+});
+});
+</script>
+</div>
+</body>
+</html>

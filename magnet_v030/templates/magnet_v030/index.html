@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>MAGNET</title>
+
+</head>
+
+<style>
+    
+    body { 
+    padding-bottom: 30px;
+    background: #f5f5f5;
+    }
+    
+    .col-sm{
+    margin: 15px;
+    padding: 15px;
+    }
+    
+    p.label {
+    font-size: 12pt;
+    margin-bottom:5px;
+    margin-top:5px;
+    font-weight:bold;
+    font-style: italic;
+    }
+    
+    div.inline{
+    padding-bottom:7px;
+    }
+    
+    .center{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    }
+
+ </style>
+
+<body>
+
+<script type="text/javascript">
+
+$(document).ready(function () {
+
+    $("#id_one_or_multiple_Multiple").change(function () {
+    if($(this).is(':checked')) {
+    		$("#id_user_genes").prop("disabled",true);
+    		}
+    });
+    
+    $("#id_one_or_multiple_One").change(function () {
+    if($(this).is(':checked')) {
+    		$("#id_user_genes").prop("disabled",false);
+    		}
+    });
+   
+    $('#SubmitBtn').click(function() {
+      checked = $("input[type=checkbox]:checked").length;
+
+      if(!checked) {
+        alert("You must check at least one checkbox to select a dataset!!!");
+        return false;
+      }
+
+    });
+});
+
+</script>
+
+{% load bootstrap4 %}
+{% load static %}
+
+<nav class="navbar navbar-expand-xl bg-info navbar-light fixed-top">
+  <ul class="navbar-nav mx-auto">
+    <a class="navbar-brand" href="#"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="70">
+    <h5>MAGNET</h5></a>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'index' %}"><h1>Macrophage Annotation of Gene Network Enrichment Tool</h1></a>
+    </li>
+  </ul>
+ </nav>
+
+<div class="container">
+<div class= "row" style="padding-top: 100px;">
+
+    <div class="col-sm">
+    <div class="card">
+    <h5 class="card-header bg-secondary text-white">Enter your gene lists or upload files</h5>
+    <div class="card-body">
+
+    {% if error_message %}<p style="color:red;"><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form action="{% url 'processing' %}" method="post" enctype="multipart/form-data">
+    
+    {% csrf_token %}
+    
+     {% bootstrap_form_errors form type='non_fields' %}
+    
+    
+    <div class="inline"> 
+    <p class="label">How many query gene clusters are being submitted?</p>
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="one_or_multiple" value="One" checked>
+        <label class="form-check-label">One</label>
+        </div>
+        
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="one_or_multiple" value="Multiple">
+        <label class="form-check-label">Multiple</label>
+        </div>
+    </div>
+    
+    {% bootstrap_field form.user_genes %}
+    {% bootstrap_field form.user_genes_upload %}
+    
+    <hr />
+    
+    <div class="inline">
+    <p class="label">Select background calculation mode:</p>
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="background_calc" value="Intersect" checked>
+        <label class="form-check-label">Intersect</label>
+        </div>
+        
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="background_calc" value="User">
+        <label class="form-check-label">User</label>
+        </div>
+    </div>
+    
+    {% bootstrap_field form.user_background %}
+    {% bootstrap_field form.user_background_upload %}
+    
+    <hr />
+    
+    <div class="inline">
+    <p class="label">Choose datasets to be used for MAGNET analysis:</p>
+    {% for choice in form.user_selected_datasets.field.choices %}
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="dataset_choices" value="{{choice.1}}" checked>
+        {% ifequal form.user_selected_datasets.data choice.1 %}
+            checked="checked"
+        {% endifequal %}
+        <label class="form-check-label"><a href="{% url 'dataset_info' choice.0 %}" target="_blank">{{choice.1}}</a></label>
+        </div>
+    {% endfor %}
+    </div>
+    <p class="text-info h6 font-italic">There are a total of {{ database_numbers.1 }} dataset{{ database_numbers.1|pluralize }} and {{ database_numbers.0 }} genes in the database.</p>
+    <button type="submit" class="btn btn-primary">Submit</button>&nbsp&nbsp&nbsp
+    <button type="reset" class="btn btn-secondary">Reset Form</button>
+    </form>
+    
+    </div>
+    </div>
+    </div>
+    
+    
+<div class="col-sm">
+<div class="card" style="padding-bottom:15px">
+<h5 class="card-header bg-info text-white">What is MAGNET?</h5>
+<div class="card-body">
+<img src="{% static 'magnet_v030/images/logo.png' %}" alt="Card image" class="center">
+<p class="text-justify lead font-weight-bold" style="font-size:14pt; margin-top:30px">MAGNET is a tool for assessing 
+and visualizing enrichments of user supplied gene sets
+against annotated macrophage gene clusters curated from published literature.</p>
+<hr />
+
+<div class="wrapper text-center">
+    <div class="btn-group btn-group-lg">
+      <button type="button" class="btn btn-info">Usage Instructions</button>
+      <button type="button" class="btn btn-info">FAQ</button>
+    </div>
+</div>
+
+<hr />
+
+<h5 style="font-style:italic">Changelog:</h5>
+<h5>Magnet version 0.8.0 &nbsp&nbsp&nbsp Aug 2018</h5>
+<ul>
+    <li>Implementation of progress bar and intermediate page</li>
+    <li>Incorporation of Bootstrap4</li>
+    <li>Added abstracts to dataset objects</li>
+</ul>
+
+<hr />
+
+<h5 style="font-style:italic">Contact:</h5>
+
+<p>Please send your comments, suggestions and bug reports to: <strong>shang.chen@northwestern.edu</strong> <br/> 
+<strong>gaurav.gadvi@northwestern.edu</strong></p>
+<img src="{% static 'magnet_v030/images/northwestern.jpg' %}" alt="school logo" class="center">
+
+</div>
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

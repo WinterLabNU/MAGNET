@@ -1,0 +1,73 @@
+<html>
+<head>
+    <title>Results</title>
+    <style>
+
+    h1.myclass{
+    background-color : yellow !important;
+    color: blue !important;
+    text-align: center;
+    word-spacing: 9px;
+    text-shadow: 1px 1px red;
+    font-family: "Papyrus","Times New Roman", Times, "Comic Sans", serif;
+    }
+
+
+
+    a:link{
+    color:'blue';
+    background-color:transparent;
+    text-decoration: none;
+    }
+
+    a:visited{
+    color:'pink';
+    background-color:transparent;
+    text-decoration: none;
+    }
+
+    a:hover{
+    color: orange;
+    background-color:transparent;
+    text-decoration: underline;
+    }
+
+    table.GeneratedTable {
+    width: 100%;
+    background-color: #f0f3cb;
+    border-collapse: collapse;
+    border-width: 2px;
+    border-color: #000000;
+    border-style: solid;
+    color: #000000;
+    }
+
+    table.GeneratedTable td, table.GeneratedTable th {
+    border-width: 2px;
+    border-color: #000000;
+    border-style: solid;
+    padding: 3px;
+    }
+
+    table.GeneratedTable thead {
+    background-color: #caec82;
+    }
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1 class="myclass">
+            MAGNET: Where else do you GO?
+        </h1>
+    </header>
+
+<div>
+    <button type = "button" onclick = 'location.href="{{request.META.HTTP_REFERER}}"'>Home</button>
+</div>
+
+</body>
+
+</html>
