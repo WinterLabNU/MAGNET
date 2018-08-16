@@ -72,3 +72,7 @@ def task_wrapper(self,user_data):
                'matched_num': matched_num,'orig_num':orig_num}
     
     return [context,session_dict]
+
+@task
+def add(x, y):
+    return x + y
