@@ -63,8 +63,8 @@ register('customJSON',custom_dumps,custom_loads,
          content_type = 'application/x-customJSON',
          content_encoding='utf-8')
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = os.environ['REDIS_URL']
+CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
 CELERY_ACCEPT_CONTENT = ['customJSON']
 CELERY_RESULT_SERIALIZER = 'customJSON'
 CELERY_TASK_SERIALIZER = 'customJSON'
