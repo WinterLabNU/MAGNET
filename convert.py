@@ -5,10 +5,10 @@ Created on Mon Feb 19 14:59:29 2018
 @author: USER
 """
 # Full path and name to your csv file 
-csv_path="D:/research/magnet/magnet_0.6.1/data/sasha_data.csv" 
+csv_path="/app/data/debbie.csv" 
 
 # Full path to your django project directory 
-magnet_home="D:/research/magnet/magnet_0.6.1/"
+magnet_home="/app"
 
 import sys,os, django
 sys.path.append(magnet_home) 
