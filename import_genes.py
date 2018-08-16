@@ -5,10 +5,10 @@ Created on Fri Jul 13 11:19:15 2018
 @author: USER
 """
 # Full path and name to your gene file 
-path="D:/research/magnet/MAGNET/mgi_symbols.txt" 
+path="/app/mgi_symbols.txt" 
 
 # Full path to your django project directory 
-magnet_home="D:/research/magnet/MAGNET/"
+magnet_home="/app"
  
 import sys,os, django
 sys.path.append(magnet_home) 
