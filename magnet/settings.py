@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'jgbol3qvos#5hd!#ua4ef)8r#g6#dn
 # DEBUG = True
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["boiling-crag-17637.herokuapp.com"]
 
 
 # Application definition
