@@ -1,2 +1,2 @@
 web: gunicorn magnet.wsgi --log-file -
-worker: celery worker --app=tasks.app
+worker: celery worker --app=magnet-test
