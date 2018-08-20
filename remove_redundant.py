@@ -5,7 +5,7 @@ Created on Fri Jul 13 11:19:15 2018
 @author: USER
 """
 # Full path and name to your csv file 
-csv_path="/app/data/debbie.csv" 
+csv_path="/app/data/microglia.csv" 
 
 # Full path to your django project directory 
 magnet_home="/app"
