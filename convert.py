@@ -18,7 +18,7 @@ django.setup()
 from magnet_v030.models import Gene
 import mygene,csv
 
-def convert(file):
+def convert(csv_path):
     mg = mygene.MyGeneInfo()
     query = []
     with open(csv_path) as csvfile:
