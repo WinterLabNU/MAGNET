@@ -103,3 +103,24 @@ def dataset_info(request, dataset_id):
     context = {'dataset':dataset,'cluster_gene_num':cluster_gene_num, 'total_gene_num':total_gene_num}
             
     return render(request,'magnet_v030/dataset_info.html', context)
+
+def documentation(request):
+    
+    if request.method=='GET':
+        page = request.GET.get('page')
+        print(page)
+        if not page:
+            return HttpResponse('<h1>Page not found</h1>')
+        else:
+            if page == "usage":
+                nav = ("active","","")
+                content = ("active","fade","fade")
+            elif page == "faq":
+                nav = ("","active","")
+                content = ("fade","active","fade")
+            else:
+                nav = ("","","active")
+                content = ("fade","fade","active")
+            
+    context = {'nav':nav,'content':content}
+    return render(request,'magnet_v030/usage.html', context)

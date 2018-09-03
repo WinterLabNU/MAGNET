@@ -15,4 +15,5 @@ urlpatterns = [
         path('results/download/', views.download_inExcel, name='download_inExcel'),
         path('dataset/<int:dataset_id>/', views.dataset_info, name='dataset_info'),
         path('processing/', views.processing, name='processing'),
+        path('documentation/', views.documentation, name='documentation'),
         ]
