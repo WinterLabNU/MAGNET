@@ -123,4 +123,4 @@ def documentation(request):
                 content = ("fade","fade","active")
             
     context = {'nav':nav,'content':content}
-    return render(request,'magnet_v030/usage.html', context)
+    return render(request,'magnet_v030/documentation.html', context)
