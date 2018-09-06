@@ -6,10 +6,10 @@ Created on Fri Jan  5 15:01:45 2018
 """
 
 # Full path and name to your csv file 
-csv_path="/app/data/sasha_data.csv" 
+csv_path="D:/research/magnet/magnet_0.8.2/data/Gautier2012.csv" 
 
 # Full path to your django project directory 
-magnet_home="/app"
+magnet_home="D:/research/magnet/magnet_0.7.1/"
 
  
 import sys,os, django
@@ -106,4 +106,4 @@ def import_csv_ensembl(csv_path):
     return "Operations completed!"
     
     
-import_csv_ensembl(csv_path)
+import_csv_symbol(csv_path)
