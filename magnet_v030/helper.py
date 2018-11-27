@@ -138,10 +138,10 @@ def hypergeom_test(user_genes, user_background, user_choices, background_calc,
             print(background_calc)
             if background_calc == "Intersect":
                 N = Annotation.objects.filter(Q(gene__in=user_background_set) & Q(cluster__dataset=d)).count()
+                n = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster__dataset=d)).count()
             else:
-                N = len(set(user_background))
-                    
-            n = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster__dataset=d)).count()
+                N = user_background_set.count()
+                n = user_genes_set.count()
             
             progress += 1
             progress_recorder.set_progress(progress, total)
@@ -154,7 +154,7 @@ def hypergeom_test(user_genes, user_background, user_choices, background_calc,
                 if b == 0:
                     pval = 1
                 else:
-                    pval = sp.hypergeom.sf(b,N,B,n)
+                    pval = sp.hypergeom.sf(b,N,n,B)
 
                 r = result_object(user_cluster,pval,[N,B,n,b])
                 r.dataset_name = str(d)
