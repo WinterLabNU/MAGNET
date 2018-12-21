@@ -52,6 +52,7 @@ def handle_csv(csv_file, one_or_multiple, background):
 
 
 
+
 def input_handler(request):
     
     user_genes = list()
@@ -135,7 +136,7 @@ def hypergeom_test(user_genes, user_background, user_choices, background_calc,
                 #for d in user_choices:
             clusters = Cluster.objects.filter(dataset=d)
             
-            print(background_calc)
+            #print(background_calc)
             if background_calc == "Intersect":
                 N = Annotation.objects.filter(Q(gene__in=user_background_set) & Q(cluster__dataset=d)).count()
                 n = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster__dataset=d)).count()
@@ -149,14 +150,17 @@ def hypergeom_test(user_genes, user_background, user_choices, background_calc,
             for c in clusters:
                 
                 B = Annotation.objects.filter(Q(gene__in=user_background_set) & Q(cluster=c)).count()
-                b = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster=c)).count()
+                b = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster=c))
+                overlap_genes = [anno.gene.gene_symbol for anno in b]
+                #print(overlap_genes)
+                b = b.count()
                     
                 if b == 0:
                     pval = 1
                 else:
                     pval = sp.hypergeom.sf(b,N,n,B)
 
-                r = result_object(user_cluster,pval,[N,B,n,b])
+                r = result_object(user_cluster,pval,[N,B,n,b],overlap_genes)
                 r.dataset_name = str(d)
                 r.cluster_number = c.cluster_number
                 r.cluster_name = c.cluster_description

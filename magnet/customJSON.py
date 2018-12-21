@@ -23,7 +23,8 @@ def custom_decoder(obj):
         if obj['__type__']=='__result_object__':
             r = result_object(user_cluster = obj["user_cluster"],
                               pval = obj["pval"], 
-                              parameters = [obj["N"],obj["B"],obj["n"],obj["b"]])
+                              parameters = [obj["N"],obj["B"],obj["n"],obj["b"]],
+                              overlap_genes = obj["overlap_genes"])
             r.dataset_name = obj['dataset_name'],
             r.cluster_number = obj['cluster_number'],
             r.cluster_name = obj['cluster_name'],

@@ -15,15 +15,16 @@ class result_object:
     cluster_name = None
     cluster_description = None
     
-    def __init__(self, user_cluster, pval, parameters):
+    def __init__(self, user_cluster, pval, parameters, overlap_genes):
         
         self.user_cluster = user_cluster
         self.pval = pval
         self.N, self.B, self.n, self.b = parameters
+        self.overlap_genes = overlap_genes
         
     def __str__(self):
         
-        str_info = [self.dataset_name, str(self.cluster_number), self.cluster_description, self.color]
+        str_info = [str(self.dataset_name), str(self.cluster_number), self.cluster_description, self.color, str(self.overlap_genes)]
         return ','.join(str_info)
     
     #def toJSON(self):

@@ -22,15 +22,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'jgbol3qvos#5hd!#ua4ef)8r#g6#dnew3^%b0_k^ej##mxh)k1'
-import os
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'jgbol3qvos#5hd!#ua4ef)8r#g6#dnew3^%b0_k^ej##mxh)k1')
+SECRET_KEY = 'jgbol3qvos#5hd!#ua4ef)8r#g6#dnew3^%b0_k^ej##mxh)k1'
+#import os
+#SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'jgbol3qvos#5hd!#ua4ef)8r#g6#dnew3^%b0_k^ej##mxh)k1')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
+DEBUG = True
+#DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = ["magnet-test.herokuapp.com"]
+#ALLOWED_HOSTS = ["magnet-test.herokuapp.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -63,8 +64,10 @@ register('customJSON',custom_dumps,custom_loads,
          content_type = 'application/x-customJSON',
          content_encoding='utf-8')
 
-CELERY_BROKER_URL = os.environ['REDIS_URL']
-CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
+#CELERY_BROKER_URL = os.environ['REDIS_URL']
+#CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['customJSON']
 CELERY_RESULT_SERIALIZER = 'customJSON'
 CELERY_TASK_SERIALIZER = 'customJSON'

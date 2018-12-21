@@ -59,7 +59,7 @@ def results(request):
         context.pop('dataset_dict')
         context['dataset_dict'] = new_dataset_dict
         
-        print(celery_result[1])
+        print(context['sig_results'][0])
         
         return render(request,'magnet_v030/magnet_results.html', context)
     else:
