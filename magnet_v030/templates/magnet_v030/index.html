@@ -77,10 +77,12 @@ $(document).ready(function () {
 
 <nav class="navbar navbar-expand-xl bg-info navbar-light fixed-top">
   <ul class="navbar-nav mx-auto">
-    <a class="navbar-brand" href="#"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="70">
-    <h5>MAGNET</h5></a>
+    <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="90px"></a>
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'index' %}"><h1>Macrophage Annotation of Gene Network Enrichment Tool</h1></a>
+      <a class="nav-link" href="{% url 'index' %}"><h1>MAGNET</h1></a>
+    </li>
+    <li class="nav-item" style="margin: auto">
+     <a class="nav-link" href="{% url 'index' %}"><h4> Macrophage Annotation of Gene Network Enrichment Tool</h4></a>
     </li>
   </ul>
  </nav>
@@ -164,8 +166,8 @@ $(document).ready(function () {
 <div class="card" style="padding-bottom:15px">
 <h5 class="card-header bg-info text-white">What is MAGNET?</h5>
 <div class="card-body">
-<img src="{% static 'magnet_v030/images/logo.png' %}" alt="Card image" class="center">
-<p class="text-justify lead font-weight-bold" style="font-size:14pt; margin-top:30px">MAGNET is a tool for assessing 
+<img src="{% static 'magnet_v030/images/logo.png' %}"  alt="Card image" class="center">
+<p class="text-justify lead font-weight-bold" style="font-size:14pt; margin-top:15px">MAGNET is a tool for assessing 
 and visualizing enrichments of user supplied gene sets
 against annotated macrophage gene clusters curated from published literature.</p>
 <hr />
@@ -180,10 +182,11 @@ against annotated macrophage gene clusters curated from published literature.</p
 <hr />
 
 <h5 style="font-style:italic">Changelog:</h5>
-<h5>Magnet version 0.8.3 &nbsp&nbsp&nbsp Dec 2018</h5>
+<h5>Magnet version 0.8.4 &nbsp&nbsp&nbsp Jan 2019</h5>
 <ul>
-    <li>Added display of overlap genes in results </li>
-    <li>Fixed typos</li>
+    <li>Updated logo</li>
+    <li>Updated navigation bar</li>
+    <li>Added four more datasets</li>
 </ul>
 
 <hr />

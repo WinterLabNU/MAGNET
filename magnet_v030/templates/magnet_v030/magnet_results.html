@@ -57,12 +57,14 @@
 
 <body>
    {% load static %}
-  <nav class="navbar navbar-expand-xl bg-info navbar-light fixed-top">
+<nav class="navbar navbar-expand-xl bg-info navbar-light fixed-top">
   <ul class="navbar-nav mx-auto">
-    <a class="navbar-brand" href="#"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="70">
-    <h5>MAGNET</h5></a>
+    <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="90px"></a>
     <li class="nav-item">
-    <a class="nav-link" href="{% url 'index' %}"><h1>Macrophage Annotation of Gene Network Enrichment Tool</h1></a>
+      <a class="nav-link" href="{% url 'index' %}"><h1>MAGNET</h1></a>
+    </li>
+    <li class="nav-item" style="margin: auto">
+     <a class="nav-link" href="{% url 'index' %}"><h4> Macrophage Annotation of Gene Network Enrichment Tool</h4></a>
     </li>
   </ul>
  </nav>

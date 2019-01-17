@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'jgbol3qvos#5hd!#ua4ef)8r#g6#dn
 #DEBUG = True
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = ["magnet-test.herokuapp.com"]
+ALLOWED_HOSTS = ["magnet-winterlab.herokuapp.com"]
 #ALLOWED_HOSTS = []
 
 
