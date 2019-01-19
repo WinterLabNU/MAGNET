@@ -4,11 +4,15 @@ Created on Fri Jan  5 15:01:45 2018
 
 @author: USER
 """
+import sys 
 
 # Full path and name to your csv file 
-csv_path="/app/data/thion_2018.csv" 
+csv_path="/app/data/" + sys.argv[1] + ".csv"
+
+print(csv_path)
 
 # Full path to your django project directory 
+
 magnet_home="/app"
 
  
