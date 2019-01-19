@@ -6,7 +6,7 @@ Created on Fri Jan  5 15:01:45 2018
 """
 
 # Full path and name to your csv file 
-csv_path="/app/data/Gautier2012.csv" 
+csv_path="/app/data/thion_2018.csv" 
 
 # Full path to your django project directory 
 magnet_home="/app"
