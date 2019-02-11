@@ -124,3 +124,24 @@ def documentation(request):
             
     context = {'nav':nav,'content':content}
     return render(request,'magnet_v030/documentation.html', context)
+
+
+def search(request):
+    query_string = ''
+    found_entries = None
+    #if ('q' in request.GET) and request.GET['q'].strip():
+    if request.GET.get('search'):
+        query_string = request.GET.get('search')
+        #query_string = request.GET['q']
+        print(query_string)
+
+        entry_query = get_query(query_string, ['gene__alias__alias_name',])
+        print(entry_query)
+
+        found_entries = Annotation.objects.filter(entry_query)
+        print(found_entries)
+    
+    else: 
+        print("False")
+    return render(request,'magnet_v030/search.html',
+                      { 'query_string': query_string, 'found_entries': found_entries})
