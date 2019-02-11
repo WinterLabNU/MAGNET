@@ -16,6 +16,7 @@ import mygene
 import scipy.stats as sp
 import statsmodels.sandbox.stats.multicomp as mt
 from .models import Gene, Dataset, Cluster, Annotation, Alias
+import re
 
 
 
