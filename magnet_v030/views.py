@@ -5,6 +5,7 @@ from .forms import UserForm
 from . import helper
 import json
 from .tasks import task_wrapper
+from .helper import normalize_query, get_query
 #from celery.result import AsyncResult
 
 def index(request):
