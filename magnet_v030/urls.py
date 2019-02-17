@@ -16,5 +16,5 @@ urlpatterns = [
         path('dataset/<int:dataset_id>/', views.dataset_info, name='dataset_info'),
         path('processing/', views.processing, name='processing'),
         path('documentation/', views.documentation, name='documentation'),
-        path('search/', views.search, name='search')
+    path('search/', views.search, name='search')
         ]

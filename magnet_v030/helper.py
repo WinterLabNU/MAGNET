@@ -20,7 +20,6 @@ from .models import Gene, Dataset, Cluster, Annotation, Alias
 from .forms import UserForm
 from .result_object import result_object
 
-
 def form_processing(form):
     
     one_or_multiple = form.cleaned_data.get('one_or_multiple')
@@ -49,16 +48,14 @@ def form_processing(form):
         user_background = [b.strip().upper() for b in user_background]
 
     return [user_genes, user_background, user_choices, background_calc]
-	
 
-def handle_csv(csv_file, one_or_multiple, is_background):
 
-    # handle csv file upload
+def handle_csv(csv_file, one_or_multiple, background):
+
     file_data = csv_file.read().decode("utf-8")
     lines = file_data.split("\n")
 
-    if one_or_multiple == "One" or background:  # single query list or is a background list
-
+    if one_or_multiple == "One" or background:
         gene_list = []
 
         for line in lines:
@@ -66,10 +63,10 @@ def handle_csv(csv_file, one_or_multiple, is_background):
             if fields[0].strip() != 'Symbols' and line != '':
                 gene_list.append(fields[0].strip().upper())
 
-        if not is_background:  # if not background list, convert to dict
+        if not background:
             gene_list = {1: gene_list}
 
-    else:  # multiple query lists
+    else:
 
         gene_list = {}
 
@@ -175,7 +172,6 @@ def convert_keys_toStr(dictionary):
 
     if not isinstance(dictionary, dict):
         return dictionary
-
     return dict((str(k), convert_keys_toStr(v)) for k, v in dictionary.items())
 
 

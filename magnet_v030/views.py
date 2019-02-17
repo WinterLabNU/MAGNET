@@ -9,19 +9,16 @@ from .helper import normalize_query, get_query
 #from celery.result import AsyncResult
 
 def index(request):
-    # the number of gene and dataset entries
+    
+    # retrieve the number of gene and dataset entries in MAGNET database
     database_numbers = [Gene.objects.count(), Dataset.objects.count()]
-    database_values = [Dataset.objects.values('dataset_name')]
-
-    dataset_list = []
-    for sampl in database_values:
-        for k in sampl:
-            dataset_list.append([f[0] for g,f in k.items()])
-
+    # retrieve the names of datasets in MAGNET database
+    dataset_list = Dataset.objects.values_list('dataset_name', flat=True)
+    
     form = UserForm()
-    context = {'database_numbers': database_numbers, 'dataset_list': dataset_list,'form':form}
-
-    return render(request,'magnet_v030/index.html',context)
+    context = {'database_numbers': database_numbers, 'dataset_list': dataset_list, 'form': form}
+    
+    return render(request, 'magnet_v030/index.html', context)
 
 def processing(request):
     
@@ -56,8 +53,7 @@ def processing(request):
     context = {'database_numbers': database_numbers, 'dataset_list': dataset_list, 'form': form}
     
     return render(request, 'magnet_v030/index.html', context)
-	
-            
+    
 def results(request):
     
     task_id = request.session.get('magnet_task_id')
@@ -143,7 +139,6 @@ def documentation(request):
             
     context = {'nav':nav,'content':content}
     return render(request,'magnet_v030/documentation.html', context)
-
 
 def search(request):
     query_string = ''

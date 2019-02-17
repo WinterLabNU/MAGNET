@@ -18,8 +18,13 @@
     }
     
     .jumbotron{
-    margin-top:70px;
+    margin-top: 70px;
+	padding-left: 5%;
     }
+	
+	.jumbop{
+	text-align: center
+	}
  </style>
 
 
@@ -27,17 +32,19 @@
 {% load static %}
     <nav class="navbar navbar-expand-xl bg-info navbar-light fixed-top">
   <ul class="navbar-nav mx-auto">
-    <a class="navbar-brand" href="#"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="70">
-    <h5>MAGNET</h5></a>
+    <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'magnet_v030/images/logo.png' %}" class="d-inline-block align-top" width="90px"></a>
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'index' %}"><h1>Macrophage Annotation of Gene Network Enrichment Tool</h1></a>
+      <a class="nav-link" href="{% url 'index' %}"><h1>MAGNET</h1></a>
+    </li>
+    <li class="nav-item" style="margin: auto">
+     <a class="nav-link" href="{% url 'index' %}"><h4> Macrophage Annotation of Gene Network Enrichment Tool</h4></a>
     </li>
   </ul>
  </nav>
     <div class="jumbotron">
-        <p class="h1">{{dataset.full_title}}</p>
-        <p class="lead font-weight-normal">{{dataset.journal}}&nbsp&nbsp&nbsp&nbsp{{dataset.publication_date}}</p>
-        <p><em>{{dataset.authors}}</em></p>
+        <p class="h1 jumbop">{{dataset.full_title}}</p>
+        <p class="lead font-weight-normal jumbop">{{dataset.journal}}&nbsp&nbsp&nbsp&nbsp{{dataset.publication_date}}</p>
+        <p class="jumbop"><em>{{dataset.authors}}</em></p>
     </div>
     
     <div class="container">

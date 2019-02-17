@@ -56,4 +56,3 @@ class UserForm(forms.Form):
             
         if not user_background and not user_background_upload:
             raise forms.ValidationError('Plaase submit the background gene list!')
-
