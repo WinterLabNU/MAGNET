@@ -47,7 +47,7 @@ def task_wrapper(self,user_data):
     
     ## split the entries by dataset and user_cluster
     dataset_dict = {}
-    for d in Dataset.objects.filter(dataset_name__in=user_choices):
+    for d in Dataset.objects.filter(pk__in=user_choices):
         dataset_list = [r for r in results if r.dataset_name==str(d)]
         for user_cluster in user_genes:
             user_cluster_list = [r for r in dataset_list if r.user_cluster==user_cluster]

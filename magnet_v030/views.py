@@ -25,20 +25,38 @@ def index(request):
 
 def processing(request):
     
-    user_data = helper.input_handler(request)
-    
-    if len(user_data[0]) == 0 or len(user_data[1]) == 0 or len(user_data[2]) == 0:
-        form = UserForm(request.POST,request.FILES or None)
-        print("ERROR! PLEASE CHECK THE INPUT")
-        error_message = 'Please enter your gene list, background and dataset choices!'
-        return render(request, 'magnet_v030/index.html', {'form':form, 'error_message':error_message})
-    
-    magnet_task = task_wrapper.delay(user_data)
-    
-    request.session['magnet_task_id'] = magnet_task.id
+    if request.method == 'POST':
+        # Create a form instance and populate it with data from the request (binding):
+        form = UserForm(request.POST, request.FILES)
+        
+        # Check if the form is valid:
+        if form.is_valid():
+            
+            # parse form
+            user_data = helper.form_processing(form)
+            print(user_data)
+            
+            # call celery task
+            magnet_task = task_wrapper.delay(user_data)
+            request.session['magnet_task_id'] = magnet_task.id
 
-    return render(request, 'magnet_v030/display_progress.html', context={'task_id': magnet_task.task_id})
+            return render(request, 'magnet_v030/display_progress.html', context={'task_id': magnet_task.task_id})
     
+    else:
+        
+        form = UserForm()
+        
+    # retrieve the number of gene and dataset entries in MAGNET database
+    database_numbers = [Gene.objects.count(), Dataset.objects.count()]
+    # retrieve the names of datasets in MAGNET database
+    dataset_list = Dataset.objects.values_list('dataset_name', flat=True) 
+    
+    print(form.errors)
+    
+    context = {'database_numbers': database_numbers, 'dataset_list': dataset_list, 'form': form}
+    
+    return render(request, 'magnet_v030/index.html', context)
+	
             
 def results(request):
     

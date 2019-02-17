@@ -21,6 +21,36 @@ from .forms import UserForm
 from .result_object import result_object
 
 
+def form_processing(form):
+    
+    one_or_multiple = form.cleaned_data.get('one_or_multiple')
+    background_calc = form.cleaned_data.get('background_calc')
+    user_choices = form.cleaned_data.get('user_selected_datasets')
+    user_choices = [int(i) for i in user_choices]  # convert str to int
+    print(one_or_multiple)
+    print(background_calc)
+    print(user_choices)
+
+    user_genes = form.cleaned_data.get('user_genes')
+    user_background = form.cleaned_data.get('user_background')
+    user_genes_upload = form.cleaned_data.get("user_genes_upload")
+    user_background_upload = form.cleaned_data.get("user_background_upload")
+    
+    if user_genes_upload:
+        user_genes = handle_csv(user_genes_upload, one_or_multiple, False)
+    else:
+        user_genes = list(filter(None, form.cleaned_data['user_genes'].split("\n")))
+        user_genes = {1: [a.strip().upper() for a in user_genes]}
+
+    if user_background_upload:
+        user_background = list(filter(None, handle_csv(user_background_upload, one_or_multiple, True)))
+    else:
+        user_background = list(filter(None, form.cleaned_data['user_background'].split("\n")))
+        user_background = [b.strip().upper() for b in user_background]
+
+    return [user_genes, user_background, user_choices, background_calc]
+	
+
 def handle_csv(csv_file, one_or_multiple, is_background):
 
     # handle csv file upload
@@ -56,56 +86,6 @@ def handle_csv(csv_file, one_or_multiple, is_background):
     return gene_list
 
 
-def input_handler(request):
-
-    # handle general user submission
-    user_genes = list()
-    user_background = list()
-
-    if request.method == 'POST':
-
-        one_or_multiple = request.POST.get('one_or_multiple')
-        background_calc = request.POST.get('background_calc')
-        print(one_or_multiple)
-        print(background_calc)
-
-        # check if files are uploaded
-        if 'user_genes_upload' in request.FILES:
-            user_genes_upload = request.FILES['user_genes_upload']
-            user_genes = handle_csv(user_genes_upload, one_or_multiple, False)
-            # user_genes = [a.strip("\"") for a in user_genes]
-
-        if 'user_background_upload' in request.FILES:
-            user_background_upload = request.FILES['user_background_upload']
-            user_background = list(filter(None, handle_csv(user_background_upload, one_or_multiple, True)))
-            # user_background = [b.strip("\"") for b in user_background]
-
-        form = UserForm(request.POST)
-
-        if form.is_bound:
-            print("BOUND!!!")
-            print(request.POST.getlist('dataset_choices'))
-
-        if form.is_valid():
-
-            # only check text fields if no files were uploaded
-            if len(user_genes) == 0:
-                user_genes = list(filter(None, form.cleaned_data['user_genes'].split("\n")))
-                user_genes = {1: [a.strip().upper() for a in user_genes]}
-
-            if len(user_background) == 0:
-                user_background = list(filter(None, form.cleaned_data['user_background'].split("\n")))
-                user_background = [b.strip().upper() for b in user_background]
-
-            user_choices = request.POST.getlist('dataset_choices')
-
-        return [user_genes, user_background, user_choices, background_calc]
-
-    else:
-        form = UserForm(request.POST)
-        return render(request, 'magnet_v030/index.html', {'form': form})
-
-
 def hypergeom_test(user_genes, user_background,
                    user_choices, background_calc,
                    total, progress_recorder):
@@ -136,7 +116,7 @@ def hypergeom_test(user_genes, user_background,
         progress += 1
         progress_recorder.set_progress(progress, total)
 
-        for d in Dataset.objects.filter(dataset_name__in=user_choices):
+        for d in Dataset.objects.filter(pk__in=user_choices):
             clusters = Cluster.objects.filter(dataset=d)
 
             # print(background_calc)
