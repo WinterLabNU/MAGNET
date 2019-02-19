@@ -50,36 +50,42 @@ def form_processing(form):
     return [user_genes, user_background, user_choices, background_calc]
 
 
-def handle_csv(csv_file, one_or_multiple, background):
+def handle_csv(csv_file, one_or_multiple, is_background):
 
     file_data = csv_file.read().decode("utf-8")
     lines = file_data.split("\n")
 
-    if one_or_multiple == "One" or background:
+    column_num = len(lines[0].split(",")) # check how many columns exist in csv file
+
+    # one query gene list or background
+    if (one_or_multiple == "One" or column_num == 1) or is_background:
+        
         gene_list = []
 
         for line in lines:
             fields = line.split(",")
+
             if fields[0].strip() != 'Symbols' and line != '':
                 gene_list.append(fields[0].strip().upper())
 
-        if not background:
+        # convert to dict if it is user query gene list
+        if not is_background:
             gene_list = {1: gene_list}
 
+    # multple query gene list
     else:
-
         gene_list = {}
-
+        
         for line in lines:
             fields = line.split(",")
-
+            
             if fields[0].strip() != 'Symbols' and line != '':
 
                 if fields[1].strip() not in gene_list:
                     gene_list[fields[1].strip()] = [fields[0].strip().upper()]
                 else:
                     gene_list[fields[1].strip()].append(fields[0].strip().upper())
-
+        
     return gene_list
 
 

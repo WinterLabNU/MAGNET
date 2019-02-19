@@ -95,17 +95,15 @@ $(document).ready(function () {
     <h5 class="card-header bg-secondary text-white">Enter your gene lists or upload files</h5>
     <div class="card-body">
 
-    {% if error_message %}<p style="color:red;"><strong>{{ error_message }}</strong></p>{% endif %}
-
     <form action="{% url 'processing' %}" method="post" enctype="multipart/form-data">
     
     {% csrf_token %}
     
-     {% bootstrap_form_errors form type='non_fields' %}
-    
-    
+    {% bootstrap_form_errors form %}
+
     <div class="inline"> 
-    <p class="label">How many query gene clusters are being submitted?</p>
+        <p class="label">How many query gene clusters are being submitted?</p>
+        
         <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="one_or_multiple" value="One" checked>
         <label class="form-check-label">One</label>
@@ -142,7 +140,8 @@ $(document).ready(function () {
     
     <div class="inline">
     <p class="label">Choose datasets to be used for MAGNET analysis:</p>
-    {% for choice in form.user_selected_datasets.field.choices %}
+    
+        {% for choice in form.user_selected_datasets.field.choices %}
         <div class="form-check">
         <input class="form-check-input" type="checkbox" name="user_selected_datasets" value="{{choice.0}}" checked>
         {% ifequal form.user_selected_datasets.data choice.1 %}
@@ -183,16 +182,10 @@ against annotated macrophage gene clusters curated from published literature.</p
 <hr />
 
 <h5 style="font-style:italic">Changelog:</h5>
-<h5>Magnet version 0.8.4 &nbsp&nbsp&nbsp Jan 2019</h5>
+<h5>Magnet version 0.8.5 &nbsp&nbsp&nbsp Feb 2019</h5>
 <ul>
-    <li>Updated logo</li>
-    <li>Updated navigation bar</li>
-    <li>Added three new datasets
-		<ul>
-		<li>Thion SM. Et al. 2018</li>
-		<li>Mike EV. Et al. 2018</li>
-		<li>Paul F. Et al. 2015</li>
-		</ul></li>
+    <li>Added gene search function</li>
+    <li>Optimized form validation process</li>
 </ul>
 
 <hr />
