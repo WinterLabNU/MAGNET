@@ -31,7 +31,6 @@ def processing(request):
             
             # parse form
             user_data = helper.form_processing(form)
-            print(user_data)
             
             # call celery task
             magnet_task = task_wrapper.delay(user_data)
@@ -74,7 +73,7 @@ def results(request):
         context.pop('dataset_dict')
         context['dataset_dict'] = new_dataset_dict
         
-        print(context['sig_results'][0])
+        #print(context['sig_results'][0])
         
         return render(request,'magnet_v030/magnet_results.html', context)
     else:
