@@ -8,11 +8,10 @@ Created on Tue Jan 30 13:49:27 2018
 from __future__ import absolute_import, unicode_literals
 from django.shortcuts import render
 from django.utils.translation import ugettext
-from django.db.models import Q
-import xlsxwriter as xl
 import mygene
-import scipy.stats as sp
-import statsmodels.sandbox.stats.multicomp as mt
+import json
+
+import xlsxwriter as xl
 from io import BytesIO
 import re
 
@@ -26,9 +25,6 @@ def form_processing(form):
     background_calc = form.cleaned_data.get('background_calc')
     user_choices = form.cleaned_data.get('user_selected_datasets')
     user_choices = [int(i) for i in user_choices]  # convert str to int
-    print(one_or_multiple)
-    print(background_calc)
-    print(user_choices)
 
     user_genes = form.cleaned_data.get('user_genes')
     user_background = form.cleaned_data.get('user_background')
@@ -59,7 +55,6 @@ def handle_csv(csv_file, one_or_multiple, is_background):
 
     # one query gene list or background
     if (one_or_multiple == "One" or column_num == 1) or is_background:
-        
         gene_list = []
 
         for line in lines:
@@ -80,98 +75,13 @@ def handle_csv(csv_file, one_or_multiple, is_background):
             fields = line.split(",")
             
             if fields[0].strip() != 'Symbols' and line != '':
-
+                
                 if fields[1].strip() not in gene_list:
                     gene_list[fields[1].strip()] = [fields[0].strip().upper()]
                 else:
                     gene_list[fields[1].strip()].append(fields[0].strip().upper())
         
     return gene_list
-
-
-def hypergeom_test(user_genes, user_background,
-                   user_choices, background_calc,
-                   total, progress_recorder):
-
-    results = list()
-    missed_genes = dict()
-    matched_gene_num = 0
-
-    user_background_set = Gene.objects.filter(alias__alias_name__in=user_background)
-    db_matched_bg = list(Alias.objects.filter(gene__in=user_background_set).values_list('alias_name', flat=True))
-    missed_background = [x for x in user_background if x not in db_matched_bg]
-
-    progress_recorder.set_progress(2, total)
-    progress = 2
-
-    for user_cluster in user_genes:
-
-        user_genes_converted = user_convert(user_genes[user_cluster])
-        user_genes_set = Gene.objects.filter(alias__alias_name__in=user_genes_converted[0])
-        matched_gene_num = matched_gene_num + user_genes_set.count()
-
-        # get missed genes
-        missed_genes[user_cluster] = user_genes_converted[1]  # get unmapped ensembl IDs
-        db_matched_g = list(Alias.objects.filter(gene__in=user_genes_set).values_list('alias_name', flat=True))
-        db_nomatch_g = [x for x in user_genes_converted[0] if x not in db_matched_g]
-        missed_genes[user_cluster].extend(db_nomatch_g)
-
-        progress += 1
-        progress_recorder.set_progress(progress, total)
-
-        for d in Dataset.objects.filter(pk__in=user_choices):
-            clusters = Cluster.objects.filter(dataset=d)
-
-            # print(background_calc)
-            if background_calc == "Intersect":
-                N = Annotation.objects.filter(Q(gene__in=user_background_set) & Q(cluster__dataset=d)).count()
-                n = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster__dataset=d)).count()
-            else:
-                N = user_background_set.count()
-                n = user_genes_set.count()
-
-            progress += 1
-            progress_recorder.set_progress(progress, total)
-
-            for c in clusters:
-
-                B = Annotation.objects.filter(Q(gene__in=user_background_set) & Q(cluster=c)).count()
-                b = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster=c))
-                overlap_genes = [anno.gene.gene_symbol for anno in b]
-                # print(overlap_genes)
-                b = b.count()
-
-                if b == 0:
-                    pval = 1
-                else:
-                    pval = sp.hypergeom.sf(b, N, n, B)
-
-                r = result_object(user_cluster, pval, [N, B, n, b], overlap_genes)
-                r.dataset_name = str(d)
-                r.cluster_number = c.cluster_number
-                r.cluster_name = c.cluster_description
-                r.cluster_description = str(c)
-
-                results.append(r)
-
-    pvals = [r.pval for r in results]
-    adjusted_pvals = mt.multipletests(pvals, method="fdr_bh")[1]
-
-    for r, p in zip(results, adjusted_pvals):
-        r.adjusted_pval = p
-
-        if r.pval <= 0.05:
-            r.color = 'red'
-        elif r.pval >= 0.95:
-            r.color = 'blue'
-        else:
-            r.color = 'grey'
-
-    return {'results': results, 'missed_genes': missed_genes,
-            'missed_background': missed_background,
-            'matched_gene_num': matched_gene_num,
-            'matched_bg_num': user_background_set.count(),
-            'progress': progress}
 
 
 def convert_keys_toStr(dictionary):
