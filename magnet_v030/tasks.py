@@ -25,6 +25,7 @@ progress_recorder = None
 progress = None
 total = None
 
+
 @task(bind=True)
 def task_wrapper(self, user_data):
     
@@ -36,18 +37,19 @@ def task_wrapper(self, user_data):
     
     total = len(user_genes)*3 + 2
     progress_recorder.set_progress(0, total)
+    print("Initiating....")
     
     user_background_converted = helper.user_convert(user_background)
     progress_recorder.set_progress(1, total)
+    print("Converted background genes....")
     
     hg_output = hypergeom_wrapper(user_genes, user_background_converted[0], 
-                                      user_choices, background_calc,
-                                      total,progress_recorder)
+                                      user_choices, background_calc, total)
     
     results = hg_output['results']
     missed_genes =  hg_output['missed_genes']
     missed_background = hg_output['missed_background']+ user_background_converted[1] 
-    matched_num = [hg_output['matched_gene_num'],hg_output['matched_bg_num']]
+    matched_num = [hg_output['matched_gene_num'], hg_output['matched_bg_num']]
     
     # get total number of genes the user submitted
     user_gene_num = list(user_genes.values()) 
@@ -55,10 +57,10 @@ def task_wrapper(self, user_data):
     
     orig_num = [user_gene_num,len(user_background)]
     
-     ## filter for significant entries
+    # filter for significant entries
     sig_results =[r for r in results if r.pval <= 0.05]
     
-    ## split the entries by dataset and user_cluster
+    # split the entries by dataset and user_cluster
     dataset_dict = {}
     for d in Dataset.objects.filter(pk__in=user_choices):
         dataset_list = [r for r in results if r.dataset_name==str(d)]
@@ -79,6 +81,7 @@ def task_wrapper(self, user_data):
     session_dict = json.dumps(session_dict)
     
     progress_recorder.set_progress(total, total)
+    print("Done!")
     
     context = {'sig_results': sig_results, 'dataset_dict': dataset_dict,
                'missed_genes': missed_genes, 'missed_background': missed_background,
@@ -90,20 +93,20 @@ def task_wrapper(self, user_data):
 def get_dataset_params(user_genes_set, user_background_set, dataset, background_calc):
     
     if background_calc == "Intersect": 
-        N = Annotation.objects.filter(Q(gene__in=user_background_set) & Q(cluster__dataset=dataset)).count()
-        n = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster__dataset=dataset)).count()
+        N = Annotation.objects.filter(Q(gene__gene_symbol__in=user_background_set) & Q(cluster__dataset=dataset)).count()
+        n = Annotation.objects.filter(Q(gene__gene_symbol__in=user_genes_set) & Q(cluster__dataset=dataset)).count()
     else:
-        N = user_background_set.count()
-        n = user_genes_set.count()
+        N = len(user_background_set)
+        n = len(user_genes_set)
     
     params = {'N': N, 'n': n, 'dataset_name': dataset.dataset_name}
     
     return params
 
 def get_cluster_params(user_genes_set, user_background_set, cluster):
-    
-    K = Annotation.objects.filter(Q(gene__in=user_background_set) & Q(cluster=cluster)).count()
-    k = Annotation.objects.filter(Q(gene__in=user_genes_set) & Q(cluster=cluster)).select_related('gene')
+
+    K = Annotation.objects.filter(Q(gene__gene_symbol__in=user_background_set) & Q(cluster=cluster)).count()
+    k = Annotation.objects.filter(Q(gene__gene_symbol__in=user_genes_set) & Q(cluster=cluster)).select_related('gene')
     
     overlap_genes = [anno.gene.gene_symbol for anno in k]
     k = k.count()
@@ -145,18 +148,21 @@ def compute_hypergeom(dataset_params, cluster_params, user_cluster):
 
 
 def hypergeom_wrapper(user_genes, user_background,
-                   user_choices, background_calc,
-                   total, progress_recorder):
+                   user_choices, background_calc, total):
 
     results = list()
     missed_genes = dict()
     matched_gene_num = 0
-
-    user_background_set = Gene.objects.filter(alias__alias_name__in=user_background)
-    db_matched_bg = list(Alias.objects.filter(gene__in=user_background_set).values_list('alias_name', flat=True))
+    
+    background_query = list(Alias.objects.filter(alias_name__in=user_background).values_list('alias_name', 'gene__gene_symbol'))
+    db_matched_bg = [alias[0] for alias in background_query]
     missed_background = [x for x in user_background if x not in db_matched_bg]
+    
+    user_background_set = [alias[1] for alias in background_query]
 
     progress_recorder.set_progress(2, total)
+    print("Counted missed background genes")
+    
     global progress
     progress = 2
     
@@ -166,24 +172,29 @@ def hypergeom_wrapper(user_genes, user_background,
     for user_cluster in user_genes:
 
         user_genes_converted = helper.user_convert(user_genes[user_cluster])
-        user_genes_set = Gene.objects.filter(alias__alias_name__in=user_genes_converted[0])
-        matched_gene_num = matched_gene_num + user_genes_set.count()
-
+        
+        user_query = Alias.objects.filter(alias_name__in=user_genes_converted[0]).values_list('alias_name', 'gene__gene_symbol')
+        
         # get missed genes
         missed_genes[user_cluster] = user_genes_converted[1]  # get unmapped ensembl IDs
-        db_matched_g = list(Alias.objects.filter(gene__in=user_genes_set).values_list('alias_name', flat=True))
+        db_matched_g = [alias[0] for alias in user_query]
         db_nomatch_g = [x for x in user_genes_converted[0] if x not in db_matched_g]
         missed_genes[user_cluster].extend(db_nomatch_g)
         
+        user_genes_set = [alias[1] for alias in user_query]
+        matched_gene_num = matched_gene_num + len(user_genes_set)
+        
         dataset_params = [ get_dataset_params(user_genes_set, user_background_set, dataset, background_calc)
-                          for dataset in datasets.iterator() ]
+                          for dataset in datasets]
         progress += 1
         progress_recorder.set_progress(progress, total)
+        print("computed dataset params...{}/{}".format(progress, total))
         
         cluster_params = [ get_cluster_params(user_genes_set, user_background_set, cluster)
-                          for cluster in clusters.iterator() ]
+                          for cluster in clusters ]
         progress += 1
         progress_recorder.set_progress(progress, total)
+        print("computed cluster params...{}/{}".format(progress, total))
         
         
         hypergeom_results = compute_hypergeom(dataset_params, cluster_params, user_cluster)
@@ -191,6 +202,7 @@ def hypergeom_wrapper(user_genes, user_background,
         
         progress += 1
         progress_recorder.set_progress(progress, total)
+        print("compiled hypergeom test results...{}/{}".format(progress, total))
             
     pvals = [r.pval for r in results]
     adjusted_pvals = mt.multipletests(pvals, method="fdr_bh")[1]
@@ -208,5 +220,5 @@ def hypergeom_wrapper(user_genes, user_background,
     return {'results': results, 'missed_genes': missed_genes,
             'missed_background': missed_background,
             'matched_gene_num': matched_gene_num,
-            'matched_bg_num': user_background_set.count(),
+            'matched_bg_num': len(user_background_set),
             'progress': progress}

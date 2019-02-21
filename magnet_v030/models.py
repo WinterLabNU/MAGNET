@@ -7,6 +7,11 @@ class Gene(models.Model):
 
     # stores main gene symbols
     gene_symbol = models.CharField(max_length=50)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['gene_symbol']),
+        ]
 
     def __str__(self):
         return self.gene_symbol
@@ -17,6 +22,11 @@ class Alias(models.Model):
     # stores known gene symbol aliases and ensembl ids of Gene object
     gene = models.ForeignKey(Gene, on_delete=models.CASCADE)
     alias_name = models.CharField(max_length=100)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['alias_name']),
+        ]
 
     def __str__(self):
         return self.gene.gene_symbol + "-" + self.alias_name
@@ -33,6 +43,9 @@ class Dataset(models.Model):
     journal = models.CharField(max_length=100, blank=True)
     link_to_pubmed = models.URLField(blank=True)
     abstract = models.TextField(blank=True)
+    
+    class Meta:
+        ordering = ["dataset_name"]
 
     def __str__(self):
         return self.dataset_name

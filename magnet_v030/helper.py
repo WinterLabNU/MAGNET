@@ -8,6 +8,7 @@ Created on Tue Jan 30 13:49:27 2018
 from __future__ import absolute_import, unicode_literals
 from django.shortcuts import render
 from django.utils.translation import ugettext
+from django.db.models import Q
 import mygene
 import json
 
