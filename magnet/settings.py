@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import psycopg2
 from kombu.serialization import register
 from .customJSON import custom_dumps, custom_loads
 
