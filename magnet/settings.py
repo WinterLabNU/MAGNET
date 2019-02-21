@@ -151,8 +151,8 @@ STATIC_URL = '/static/'
 
 # Heroku: Update database configuration from $DATABASE_URL.
 import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
